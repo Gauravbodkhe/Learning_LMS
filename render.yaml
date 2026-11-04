@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: adaptive-lms
+    env: static
+    buildCommand: npm run build
+    staticPublishPath: dist/lms-app/browser
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
