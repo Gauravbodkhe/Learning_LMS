@@ -1,0 +1,384 @@
+<div class="page-wrapper container">
+  <!-- Engine Header Banner -->
+  <section class="adaptive-hero-banner saas-card">
+    <div class="hero-left">
+      <div class="engine-badge-row">
+        <span class="badge badge-primary">Core Intelligence Module</span>
+        <span class="badge badge-accent">Deterministic Rule-Based System</span>
+        <span class="academic-flag">Academic B.Tech Project Core</span>
+      </div>
+
+      <h1 class="engine-hero-title">Adaptive Learning Recommendation Engine</h1>
+      <p class="engine-hero-desc">
+        A student-centered pedagogical engine that continuously analyzes evaluation results, computes competency strengths, and synthesizes tailored learning roadmaps based on algorithmic performance thresholds.
+      </p>
+
+      <div class="algorithm-spec-callout">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="16" x2="12" y2="12"/>
+          <line x1="12" y1="8" x2="12.01" y2="8"/>
+        </svg>
+        <span>
+          <strong>Algorithm Specification:</strong> Evaluates scores: 
+          <code>&lt;40% (Remedial R-101)</code>, 
+          <code>40%-69% (Consolidation R-202)</code>, 
+          <code>70%-89% (Expansion R-303)</code>, 
+          <code>&ge;90% (Mastery R-404)</code>.
+        </span>
+      </div>
+    </div>
+
+    <!-- Live Competency Status Badge -->
+    <div class="hero-right">
+      <div class="competency-summary-box">
+        <h4 class="comp-box-title">Competency State</h4>
+        <div class="comp-counts-row">
+          <div class="comp-stat-badge stat-strong">
+            <span class="count">{{ strongSubjects.length }}</span>
+            <span class="label">Strong (&ge;75%)</span>
+          </div>
+          <div class="comp-stat-badge stat-average">
+            <span class="count">{{ averageSubjects.length }}</span>
+            <span class="label">Average (40-74%)</span>
+          </div>
+          <div class="comp-stat-badge stat-weak">
+            <span class="count">{{ weakSubjects.length }}</span>
+            <span class="label">Weak (&lt;40%)</span>
+          </div>
+        </div>
+        <p class="comp-subtext">6 Evaluated Subjects Across CSE Curriculum</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Viva Interactive Simulation Bar -->
+  <section class="saas-card simulation-controller-card">
+    <div class="sim-header">
+      <div class="sim-title-group">
+        <div class="pulse-indicator"></div>
+        <h3 class="sim-title">Live Viva Demonstration Simulator</h3>
+      </div>
+      <span class="badge badge-neutral">Examiner & Viva Tool</span>
+    </div>
+
+    <p class="sim-desc">
+      Test the dynamic adaptability in real time. Choose a subject and target evaluation score to witness instant rule triggers, strength category reclassifications, and roadmap recalculations.
+    </p>
+
+    <div class="sim-controls-row">
+      <div class="sim-preset-buttons">
+        <button 
+          type="button" 
+          class="btn btn-outline btn-sm"
+          [disabled]="simulationRunning"
+          (click)="runEvaluationSimulation('Angular', 85)">
+          Simulate Angular Mastery (Score: 85%)
+        </button>
+
+        <button 
+          type="button" 
+          class="btn btn-outline btn-sm"
+          [disabled]="simulationRunning"
+          (click)="runEvaluationSimulation('Python', 30)">
+          Simulate Python Remedial (Score: 30%)
+        </button>
+
+        <button 
+          type="button" 
+          class="btn btn-outline btn-sm"
+          [disabled]="simulationRunning"
+          (click)="runEvaluationSimulation('Database Management', 95)">
+          Simulate DBMS Capstone (Score: 95%)
+        </button>
+      </div>
+    </div>
+
+    @if (simulationMessage) {
+      <div class="sim-feedback-alert">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+          <polyline points="22 4 12 14.01 9 11.01"/>
+        </svg>
+        <span>{{ simulationMessage }}</span>
+      </div>
+    }
+  </section>
+
+  <!-- Section A & B: Subject Performance & Strength Analysis -->
+  <section class="section-container">
+    <div class="section-head-bar">
+      <div>
+        <h2 class="section-main-title">A & B. Subject Performance & Strength Matrix</h2>
+        <p class="section-sub-desc">Comprehensive competency ratings and categorization across all core computer science domains</p>
+      </div>
+    </div>
+
+    <div class="performance-cards-grid">
+      @for (perf of subjectPerformances; track perf.subject) {
+        <div class="saas-card subject-card" [class.border-weak]="perf.strengthCategory === 'Weak'" [class.border-strong]="perf.strengthCategory === 'Strong'">
+          <div class="subject-card-top">
+            <h3 class="subject-title">{{ perf.subject }}</h3>
+            <span 
+              class="badge"
+              [class.badge-strong]="perf.strengthCategory === 'Strong'"
+              [class.badge-average]="perf.strengthCategory === 'Average'"
+              [class.badge-weak]="perf.strengthCategory === 'Weak'">
+              {{ perf.strengthCategory }}
+            </span>
+          </div>
+
+          <!-- Gauge Score Representation -->
+          <div class="score-display-row">
+            <div class="big-score" [class.text-strong]="perf.strengthCategory === 'Strong'" [class.text-weak]="perf.strengthCategory === 'Weak'">
+              {{ perf.score }}<span class="pct-sign">%</span>
+            </div>
+            <div class="score-meta-text">
+              <span class="attempts-count">{{ perf.attemptsCount }} evaluations logged</span>
+              <span class="last-date">Last attempt: {{ perf.lastAttemptDate }}</span>
+            </div>
+          </div>
+
+          <!-- Progress Track -->
+          <div class="progress-track progress-track-lg">
+            <div 
+              class="progress-fill"
+              [class.progress-fill-success]="perf.strengthCategory === 'Strong'"
+              [class.progress-fill-warning]="perf.strengthCategory === 'Average'"
+              [class.progress-fill-danger]="perf.strengthCategory === 'Weak'"
+              [style.width.%]="perf.score">
+            </div>
+          </div>
+
+          <!-- Focus areas -->
+          <div class="focus-topics-box">
+            <span class="focus-label">Identified Focus Topics:</span>
+            <div class="focus-tags">
+              @for (topic of perf.topicsToReview; track topic) {
+                <span class="topic-tag">{{ topic }}</span>
+              }
+            </div>
+          </div>
+
+          <!-- Action CTA -->
+          <div class="subject-card-footer">
+            <button type="button" class="btn btn-outline btn-sm btn-block" (click)="takeQuizForSubject(perf.subject)">
+              Evaluate in Assessment →
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- Section C: Rule-Based Adaptive Recommendation Engine -->
+  <section class="section-container">
+    <div class="section-head-bar">
+      <div>
+        <h2 class="section-main-title">C. Generated Adaptive Recommendations</h2>
+        <p class="section-sub-desc">Dynamically generated from real student assessment telemetry according to pedagogical rules</p>
+      </div>
+
+      <!-- Recommendation Filter Tabs -->
+      <div class="rec-tabs-row">
+        <button 
+          type="button" 
+          class="tab-btn" 
+          [class.active]="activeTab === 'all'"
+          (click)="activeTab = 'all'">
+          All Recommendations ({{ recommendations.length }})
+        </button>
+        <button 
+          type="button" 
+          class="tab-btn" 
+          [class.active]="activeTab === 'high'"
+          (click)="activeTab = 'high'">
+          High Priority
+        </button>
+        <button 
+          type="button" 
+          class="tab-btn" 
+          [class.active]="activeTab === 'completed'"
+          (click)="activeTab = 'completed'">
+          Resolved
+        </button>
+      </div>
+    </div>
+
+    @if (filteredRecommendations.length === 0) {
+      <div class="saas-card empty-rec-card">
+        <p>No recommendations match the selected filter.</p>
+      </div>
+    } @else {
+      <div class="recommendations-full-grid">
+        @for (rec of filteredRecommendations; track rec.id) {
+          <div 
+            class="saas-card recommendation-card" 
+            [class.card-resolved]="rec.completed"
+            [class.priority-high-card]="rec.priority === 'High' && !rec.completed">
+            
+            <div class="rec-card-header">
+              <div class="rec-header-left">
+                <span class="badge" [class.badge-weak]="rec.priority === 'High'" [class.badge-average]="rec.priority !== 'High'">
+                  {{ rec.subject }} • Current: {{ rec.currentPerformance }}%
+                </span>
+                <span class="badge badge-neutral">{{ rec.difficultyLevel }} Level</span>
+                <span class="rule-ref-chip">{{ rec.ruleTriggered }}</span>
+              </div>
+
+              @if (rec.completed) {
+                <span class="badge badge-strong">✓ Resolved</span>
+              } @else {
+                <span class="badge priority-tag" [class.badge-weak]="rec.priority === 'High'">
+                  {{ rec.priority }} Priority
+                </span>
+              }
+            </div>
+
+            <div class="rec-card-body">
+              <h3 class="rec-card-title">{{ rec.recommendationTitle }}</h3>
+              <div class="rec-reason-bubble">
+                <span class="reason-label">Adaptive Rationale:</span>
+                <p class="reason-text">{{ rec.reason }}</p>
+              </div>
+            </div>
+
+            <div class="rec-card-actions">
+              <button 
+                type="button" 
+                class="btn btn-primary" 
+                (click)="onExecuteRecommendation(rec)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="5 3 19 12 5 21 5 3"/>
+                </svg>
+                {{ rec.recommendedAction }}
+              </button>
+
+              @if (!rec.completed) {
+                <button 
+                  type="button" 
+                  class="btn btn-ghost btn-sm mark-done-btn" 
+                  (click)="onMarkResolved(rec, $event)">
+                  Mark as Resolved
+                </button>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </section>
+
+  <!-- Section D: Personalized Learning Roadmap -->
+  <section class="section-container">
+    <div class="section-head-bar">
+      <div>
+        <h2 class="section-main-title">D. Personalized Learning Path</h2>
+        <p class="section-sub-desc">Visual progression path: Beginner &rarr; Intermediate &rarr; Advanced milestones</p>
+      </div>
+    </div>
+
+    <div class="saas-card roadmap-container-card">
+      <div class="roadmap-timeline-steps">
+        @for (step of roadmapSteps; track step.id; let idx = $index) {
+          <div class="roadmap-step-item" [class.step-completed]="step.status === 'completed'" [class.step-current]="step.status === 'current'" [class.step-upcoming]="step.status === 'upcoming'">
+            
+            <div class="step-indicator-col">
+              <div class="step-circle">
+                @if (step.status === 'completed') {
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                } @else if (step.status === 'current') {
+                  <span class="active-pulse"></span>
+                } @else {
+                  <span>{{ idx + 1 }}</span>
+                }
+              </div>
+              @if (idx < roadmapSteps.length - 1) {
+                <div class="step-connector-line"></div>
+              }
+            </div>
+
+            <div class="step-content-card">
+              <div class="step-top-row">
+                <span class="badge badge-accent">{{ step.level }}</span>
+                <span class="step-subject-name">{{ step.subject }}</span>
+                <span class="step-status-chip" [class.chip-completed]="step.status === 'completed'" [class.chip-current]="step.status === 'current'">
+                  {{ step.status === 'completed' ? 'Completed' : (step.status === 'current' ? 'In Progress' : 'Upcoming') }}
+                </span>
+              </div>
+              <h4 class="step-title">{{ step.title }}</h4>
+              <p class="step-description">{{ step.description }}</p>
+              <div class="step-meta-row">
+                <span class="step-hours">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="12 6 12 12 16 14"/>
+                  </svg>
+                  Est. {{ step.estimatedHours }} Hours
+                </span>
+                @if (step.status === 'current') {
+                  <a routerLink="/courses" class="btn btn-primary btn-sm">Advance Topic →</a>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Section E: Learning Improvement Tracking -->
+  <section class="section-container">
+    <div class="section-head-bar">
+      <div>
+        <h2 class="section-main-title">E. Learning Improvement & Consistency Tracking</h2>
+        <p class="section-sub-desc">Quantitative evidence of student growth, score deltas, and consistency streaks</p>
+      </div>
+    </div>
+
+    <div class="improvements-grid">
+      @for (item of improvementMetrics; track item.subject) {
+        <div class="saas-card metric-card">
+          <div class="metric-header">
+            <h4 class="metric-subject">{{ item.subject }}</h4>
+            <span class="badge" [class.badge-strong]="item.trend === 'up'" [class.badge-weak]="item.trend === 'down'">
+              {{ item.improvementPercentage >= 0 ? '+' : '' }}{{ item.improvementPercentage }}% Delta
+            </span>
+          </div>
+
+          <div class="scores-comparison-row">
+            <div class="score-col">
+              <span class="score-sub">Previous</span>
+              <span class="score-val muted">{{ item.previousScore }}%</span>
+            </div>
+
+            <div class="score-arrow-divider">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="5" y1="12" x2="19" y2="12"/>
+                <polyline points="12 5 19 12 12 19"/>
+              </svg>
+            </div>
+
+            <div class="score-col">
+              <span class="score-sub">Latest Score</span>
+              <span class="score-val highlight">{{ item.latestScore }}%</span>
+            </div>
+          </div>
+
+          <div class="metric-footer-metrics">
+            <div class="footer-metric-pill">
+              <span class="pill-k">Streak:</span>
+              <span class="pill-v">{{ item.consistencyDays }} Days</span>
+            </div>
+            <div class="footer-metric-pill">
+              <span class="pill-k">Recommendations Solved:</span>
+              <span class="pill-v">{{ item.recommendationsResolved }}</span>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+</div>

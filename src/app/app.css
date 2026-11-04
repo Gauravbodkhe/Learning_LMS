@@ -1,0 +1,28 @@
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  background-color: var(--bg-page);
+  color: var(--text-primary);
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+.app-main-pane {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  margin-left: var(--sidebar-w, 0px);
+  transition: margin-left 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  min-height: 100vh;
+}
+
+.app-main-content {
+  flex: 1;
+}
+
+/* Under 900px: Sidebar is an overlay drawer, so main pane has 0 left margin */
+@media (max-width: 899px) {
+  .app-main-pane {
+    margin-left: 0 !important;
+  }
+}

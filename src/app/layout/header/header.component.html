@@ -1,0 +1,171 @@
+<header class="app-header">
+  <div class="header-inner">
+    <!-- Left Section: Mobile Menu Trigger + Global Search -->
+    <div class="header-left">
+      <!-- Mobile Sidebar Drawer Toggle (shown under 900px) -->
+      <button 
+        type="button" 
+        class="mobile-menu-trigger" 
+        (click)="sidebar.toggleMobile()" 
+        aria-label="Open navigation menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="4" y1="12" x2="20" y2="12"/>
+          <line x1="4" y1="6" x2="20" y2="6"/>
+          <line x1="4" y1="18" x2="20" y2="18"/>
+        </svg>
+      </button>
+
+      <!-- Clean Minimal Search Bar -->
+      <div class="header-search-box">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input 
+          type="search" 
+          class="search-input" 
+          placeholder="Search courses, lessons, topics..." 
+          (keydown.enter)="onSearch($event)" />
+        <kbd class="search-shortcut" aria-hidden="true">/</kbd>
+      </div>
+    </div>
+
+    <!-- Right Section: Notifications & User Profile -->
+    @if (authService.currentUser$ | async; as user) {
+      <div class="header-right">
+        <!-- Notification Popover -->
+        <div class="header-dropdown-container">
+          <button 
+            type="button" 
+            class="header-icon-btn" 
+            [class.active]="showNotifications()"
+            (click)="toggleNotifications()"
+            aria-label="View notifications">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
+              <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+            </svg>
+            @if ((notificationService.unreadCount$ | async); as unread) {
+              @if (unread > 0) {
+                <span class="unread-count-badge">{{ unread }}</span>
+              }
+            }
+          </button>
+
+          @if (showNotifications()) {
+            <div class="popover-panel notifications-popover">
+              <div class="popover-head">
+                <div>
+                  <span class="popover-title">Notifications</span>
+                  <span class="popover-sub">Adaptive updates & activity</span>
+                </div>
+                <div class="popover-head-actions">
+                  <button type="button" class="link-btn" (click)="markAllAsRead($event)">Mark all read</button>
+                  <button type="button" class="link-btn text-muted" (click)="clearNotifications($event)">Clear</button>
+                </div>
+              </div>
+
+              <div class="notifications-scroll">
+                @if (notificationService.notifications$ | async; as notifs) {
+                  @if (notifs.length === 0) {
+                    <div class="empty-notif-state">
+                      <p>No notifications</p>
+                    </div>
+                  } @else {
+                    @for (item of notifs; track item.id) {
+                      <div 
+                        class="notif-row" 
+                        [class.unread]="!item.read"
+                        (click)="markAsRead(item, $event)">
+                        <div class="notif-dot" [class.active]="!item.read"></div>
+                        <div class="notif-body">
+                          <div class="notif-top">
+                            <span class="notif-item-title">{{ item.title }}</span>
+                            <span class="notif-time">{{ item.timestamp }}</span>
+                          </div>
+                          <p class="notif-message">{{ item.message }}</p>
+                        </div>
+                      </div>
+                    }
+                  }
+                }
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- User Profile Avatar & Dropdown -->
+        <div class="header-dropdown-container">
+          <button 
+            type="button" 
+            class="header-avatar-btn" 
+            (click)="toggleProfileMenu()"
+            [attr.aria-expanded]="showProfileMenu()"
+            aria-label="User account menu">
+            <img 
+              [src]="user.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80'" 
+              [alt]="user.name" 
+              class="header-avatar-img" />
+            <span class="header-user-name">{{ user.name }}</span>
+            <svg class="dropdown-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m6 9 6 6 6-6"/>
+            </svg>
+          </button>
+
+          @if (showProfileMenu()) {
+            <div class="popover-panel profile-popover">
+              <div class="profile-info-head">
+                <span class="profile-name">{{ user.name }}</span>
+                <span class="profile-email">{{ user.email }}</span>
+                <span class="profile-id-tag">ID: {{ user.studentId }}</span>
+              </div>
+
+              <div class="popover-divider"></div>
+
+              <div class="popover-menu-links">
+                <a routerLink="/profile" class="popover-menu-item" (click)="closeDropdowns()">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                  </svg>
+                  Profile & Team Details
+                </a>
+
+                <a routerLink="/adaptive-learning" class="popover-menu-item" (click)="closeDropdowns()">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3L12 3Z"/>
+                  </svg>
+                  Adaptive Recommendations
+                </a>
+
+                <button type="button" class="popover-menu-item text-warning" (click)="onResetDemoData()">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                    <path d="M3 3v5h5"/>
+                  </svg>
+                  Reset Demo Data
+                </button>
+              </div>
+
+              <div class="popover-divider"></div>
+
+              <button type="button" class="popover-menu-item text-danger" (click)="logout()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                  <polyline points="16 17 21 12 16 7"/>
+                  <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+                Sign Out
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+    } @else {
+      <div class="header-right">
+        <a routerLink="/login" class="btn btn-ghost btn-sm">Sign In</a>
+        <a routerLink="/register" class="btn btn-primary btn-sm">Register</a>
+      </div>
+    }
+  </div>
+</header>

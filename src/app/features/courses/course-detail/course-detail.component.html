@@ -1,0 +1,203 @@
+<div class="page-wrapper container">
+  @if (!course) {
+    <div class="saas-card not-found-card">
+      <h2>Course Not Found</h2>
+      <p>The requested course curriculum does not exist or has been removed.</p>
+      <a routerLink="/courses" class="btn btn-primary" style="margin-top: 1rem;">Back to Catalog</a>
+    </div>
+  } @else {
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb-bar">
+      <a routerLink="/courses">Courses</a>
+      <span class="bc-sep">/</span>
+      <span class="bc-cat">{{ course.category }}</span>
+      <span class="bc-sep">/</span>
+      <span class="bc-current">{{ course.title }}</span>
+    </nav>
+
+    <!-- Hero Header Card -->
+    <section class="saas-card course-hero-card">
+      <div class="hero-main-details">
+        <div class="hero-badge-row">
+          <span class="badge badge-accent">{{ course.category }}</span>
+          <span class="badge badge-primary">{{ course.difficulty }} Level</span>
+          <span class="badge badge-neutral">{{ course.durationHours }} Hours Curriculum</span>
+        </div>
+
+        <h1 class="course-detail-title">{{ course.title }}</h1>
+        <p class="course-detail-shortdesc">{{ course.fullDescription }}</p>
+
+        <!-- Instructor Profile Card -->
+        <div class="instructor-profile-box">
+          <img [src]="course.instructor.avatar" [alt]="course.instructor.name" class="inst-avatar-large" />
+          <div class="inst-info">
+            <span class="inst-subtitle">Course Lead & Author</span>
+            <h4 class="inst-fullname">{{ course.instructor.name }}</h4>
+            <span class="inst-fulltitle">{{ course.instructor.title }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Panel Sidecard -->
+      <div class="hero-action-panel">
+        <img [src]="course.thumbnail" [alt]="course.title" class="hero-preview-img" />
+
+        <div class="panel-body">
+          @if (course.enrolled) {
+            <div class="enrollment-status-box">
+              <div class="status-top">
+                <span class="badge badge-strong">Enrolled Student</span>
+                <span class="status-pct">{{ course.progressPercentage }}% Done</span>
+              </div>
+              <div class="progress-track" style="height: 10px; margin: 0.75rem 0;">
+                <div class="progress-fill" [style.width.%]="course.progressPercentage"></div>
+              </div>
+              <span class="lessons-stat">{{ completedLessonsCount }} of {{ totalLessonsCount }} lessons completed</span>
+            </div>
+
+            <button type="button" class="btn btn-primary btn-block btn-lg" (click)="onEnrollOrContinue()">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="5 3 19 12 5 21 5 3"/>
+              </svg>
+              {{ course.progressPercentage === 100 ? 'Review Learning Materials' : 'Resume Learning' }}
+            </button>
+          } @else {
+            <div class="free-enrollment-tag">
+              <span class="free-label">Curriculum Access</span>
+              <span class="free-status">Full Open Enrollment</span>
+            </div>
+
+            <button type="button" class="btn btn-primary btn-block btn-lg" (click)="onEnrollOrContinue()">
+              Enroll & Start Learning
+            </button>
+          }
+
+          <div class="course-quick-facts">
+            <div class="fact-item">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/>
+              </svg>
+              <span>{{ totalLessonsCount }} Structured Lessons</span>
+            </div>
+            <div class="fact-item">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+              <span>{{ course.durationHours }} Total Video & Reading Hours</span>
+            </div>
+            <div class="fact-item">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+              </svg>
+              <span>Adaptive Telemetry Enabled</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Syllabus & Curriculum Layout -->
+    <div class="course-content-grid">
+      <!-- Left: Objectives, Syllabus & Outcomes -->
+      <div class="content-left">
+        <!-- Objectives Card -->
+        <section class="saas-card detail-section-card">
+          <h3 class="section-heading">Course Objectives</h3>
+          <ul class="checklist-grid">
+            @for (obj of course.objectives; track obj) {
+              <li class="check-item">
+                <div class="check-icon">✓</div>
+                <span>{{ obj }}</span>
+              </li>
+            }
+          </ul>
+        </section>
+
+        <!-- Course Syllabus / Chapters -->
+        <section class="saas-card detail-section-card">
+          <div class="syllabus-header-row">
+            <div>
+              <h3 class="section-heading">Course Syllabus</h3>
+              <p class="syllabus-meta-sub">{{ course.chapters.length }} Chapters • {{ totalLessonsCount }} Lessons</p>
+            </div>
+            <span class="badge badge-primary">Interactive Modules</span>
+          </div>
+
+          <div class="chapters-accordion">
+            @for (chapter of course.chapters; track chapter.id; let chIdx = $index) {
+              <div class="chapter-block">
+                <div class="chapter-block-header">
+                  <div class="chapter-title-group">
+                    <span class="chapter-index">Chapter {{ chIdx + 1 }}</span>
+                    <h4 class="chapter-title">{{ chapter.title }}</h4>
+                  </div>
+                  <span class="chapter-count">{{ chapter.lessons.length }} Lessons</span>
+                </div>
+
+                <div class="chapter-lessons-list">
+                  @for (lesson of chapter.lessons; track lesson.id; let lIdx = $index) {
+                    <div class="lesson-row-item" (click)="openSpecificLesson(lesson.id)">
+                      <div class="lesson-left">
+                        <span class="lesson-status-icon" [class.completed]="lesson.completed">
+                          @if (lesson.completed) {
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                              <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                          } @else {
+                            <span>{{ lIdx + 1 }}</span>
+                          }
+                        </span>
+                        <div class="lesson-titles">
+                          <span class="lesson-name">{{ lesson.title }}</span>
+                          <span class="lesson-summary-peek">{{ lesson.summary }}</span>
+                        </div>
+                      </div>
+
+                      <div class="lesson-right">
+                        <span class="lesson-duration">{{ lesson.durationMinutes }} mins</span>
+                        <button type="button" class="btn btn-ghost btn-sm start-lesson-btn">
+                          {{ lesson.completed ? 'Review' : 'Start' }} →
+                        </button>
+                      </div>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        </section>
+
+        <!-- Learning Outcomes -->
+        <section class="saas-card detail-section-card">
+          <h3 class="section-heading">Target Learning Outcomes</h3>
+          <div class="outcomes-list">
+            @for (outcome of course.learningOutcomes; track outcome) {
+              <div class="outcome-box">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="m9 12 2 2 4-4"/>
+                </svg>
+                <span>{{ outcome }}</span>
+              </div>
+            }
+          </div>
+        </section>
+      </div>
+
+      <!-- Right: Adaptive Assessment Connection -->
+      <div class="content-right">
+        <div class="saas-card assessment-cta-card">
+          <div class="badge badge-secondary" style="margin-bottom: 0.75rem;">Subject Assessment</div>
+          <h4 class="cta-title">Test Your Mastery in {{ course.subjectTag }}</h4>
+          <p class="cta-desc">
+            Take the official quiz for {{ course.subjectTag }} to evaluate your competency and trigger personalized adaptive recommendations.
+          </p>
+          <a routerLink="/assessments" class="btn btn-secondary btn-block">
+            Launch {{ course.subjectTag }} Assessment
+          </a>
+        </div>
+      </div>
+    </div>
+  }
+</div>

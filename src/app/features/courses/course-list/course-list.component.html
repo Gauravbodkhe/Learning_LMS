@@ -1,0 +1,197 @@
+<div class="page-wrapper container">
+  <!-- Page Header -->
+  <div class="courses-header-section">
+    <div>
+      <span class="badge badge-primary">
+        {{ myLearningOnly ? 'My Active Learning' : 'Academic Curriculum' }}
+      </span>
+      <h1 class="page-title">
+        {{ myLearningOnly ? 'My Enrolled Courses' : 'Comprehensive Course Catalog' }}
+      </h1>
+      <p class="page-desc">
+        {{ myLearningOnly 
+            ? 'Track your ongoing subject milestones, completed chapters, and resume learning.' 
+            : 'Explore industry-aligned computer science courses designed to adapt to your performance.' }}
+      </p>
+    </div>
+
+    @if (myLearningOnly) {
+      <a routerLink="/courses" class="btn btn-outline">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        Browse All Courses
+      </a>
+    } @else {
+      <a routerLink="/my-learning" class="btn btn-secondary">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+          <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+        </svg>
+        View My Enrolled
+      </a>
+    }
+  </div>
+
+  <!-- Search & Filter Controls Bar -->
+  <div class="saas-card filters-bar">
+    <!-- Search Field -->
+    <div class="search-input-box">
+      <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input 
+        type="text" 
+        class="form-input search-field" 
+        placeholder="Search courses by title, topic, or instructor..."
+        [(ngModel)]="searchQuery" 
+        (ngModelChange)="onSearchChange()" />
+      @if (searchQuery) {
+        <button type="button" class="clear-search-btn" (click)="searchQuery = ''; applyFilters()">✕</button>
+      }
+    </div>
+
+    <!-- Difficulty Filter -->
+    <div class="filter-group">
+      <label class="filter-label">Difficulty:</label>
+      <select class="form-select filter-select" [(ngModel)]="selectedDifficulty" (ngModelChange)="applyFilters()">
+        @for (diff of difficulties; track diff) {
+          <option [value]="diff">{{ diff }}</option>
+        }
+      </select>
+    </div>
+
+    <!-- Sorting Filter -->
+    <div class="filter-group">
+      <label class="filter-label">Sort By:</label>
+      <select class="form-select filter-select" [(ngModel)]="selectedSort" (ngModelChange)="onSortChange()">
+        <option value="default">Default Order</option>
+        <option value="title">Course Title (A-Z)</option>
+        <option value="progress">Highest Progress</option>
+        <option value="duration">Shortest Duration</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Category Pills Bar -->
+  <div class="category-pills-row">
+    @for (cat of categories; track cat) {
+      <button 
+        type="button" 
+        class="category-pill" 
+        [class.active]="selectedCategory === cat"
+        (click)="setCategory(cat)">
+        {{ cat }}
+      </button>
+    }
+  </div>
+
+  <!-- Courses Grid -->
+  @if (filteredCourses.length === 0) {
+    <div class="saas-card empty-results-card">
+      <div class="empty-icon-circle">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+      </div>
+      <h3 class="empty-title">No matching courses found</h3>
+      <p class="empty-desc">Try clearing your search query or switching categories to view more courses.</p>
+      <button type="button" class="btn btn-outline btn-sm" (click)="searchQuery = ''; selectedCategory = 'All'; selectedDifficulty = 'All'; applyFilters()">
+        Reset All Filters
+      </button>
+    </div>
+  } @else {
+    <div class="courses-grid">
+      @for (course of filteredCourses; track course.id) {
+        <div class="saas-card course-card saas-card-interactive" (click)="openCourseDetails(course.id)">
+          <!-- Thumbnail & Badges -->
+          <div class="course-thumb-container">
+            <img [src]="course.thumbnail" [alt]="course.title" class="course-thumb-img" (error)="onThumbError($event)" />
+            <div class="thumb-badges-overlay">
+              <span class="badge badge-accent">{{ course.category }}</span>
+              <span class="badge" [class.badge-strong]="course.difficulty === 'Beginner'" [class.badge-primary]="course.difficulty === 'Intermediate'" [class.badge-weak]="course.difficulty === 'Advanced'">
+                {{ course.difficulty }}
+              </span>
+            </div>
+            @if (course.enrolled) {
+              <div class="enrolled-ribbon">Enrolled</div>
+            }
+          </div>
+
+          <!-- Card Body -->
+          <div class="course-card-content">
+            <h3 class="course-card-title">{{ course.title }}</h3>
+            <p class="course-card-desc">{{ course.shortDescription }}</p>
+
+            <!-- Instructor row -->
+            <div class="instructor-row">
+              <img [src]="course.instructor.avatar" [alt]="course.instructor.name" class="instructor-avatar" />
+              <div class="instructor-meta">
+                <span class="instructor-name">{{ course.instructor.name }}</span>
+                <span class="instructor-role">{{ course.instructor.title }}</span>
+              </div>
+            </div>
+
+            <!-- Meta statistics -->
+            <div class="course-meta-pills">
+              <span class="meta-pill">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/>
+                  <polyline points="12 6 12 12 16 14"/>
+                </svg>
+                {{ course.durationHours }} Hours
+              </span>
+              <span class="meta-pill">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/>
+                </svg>
+                {{ getLessonsCount(course) }} Lessons
+              </span>
+              <span class="meta-pill">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+                </svg>
+                {{ course.subjectTag }}
+              </span>
+            </div>
+
+            <!-- Course Progress Bar if enrolled -->
+            @if (course.enrolled) {
+              <div class="course-progress-section">
+                <div class="progress-label-row">
+                  <span class="prog-text">{{ getCompletedLessonsCount(course) }} of {{ getLessonsCount(course) }} lessons completed</span>
+                  <span class="prog-pct">{{ course.progressPercentage }}%</span>
+                </div>
+                <div class="progress-track">
+                  <div class="progress-fill" [style.width.%]="course.progressPercentage"></div>
+                </div>
+              </div>
+            }
+
+            <!-- Card Actions -->
+            <div class="course-card-actions">
+              <button 
+                type="button" 
+                class="btn btn-outline btn-sm" 
+                (click)="openCourseDetails(course.id)">
+                View Syllabus
+              </button>
+              
+              <button 
+                type="button" 
+                class="btn btn-sm" 
+                [class.btn-primary]="course.enrolled" 
+                [class.btn-secondary]="!course.enrolled"
+                (click)="enrollOrContinue(course, $event)">
+                {{ course.enrolled ? (course.progressPercentage === 100 ? 'Review Course' : 'Continue Learning') : 'Enroll Now' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

@@ -1,0 +1,229 @@
+<div class="learning-fullscreen-layout">
+  @if (!course) {
+    <div class="container page-wrapper">
+      <div class="saas-card not-found-card">
+        <h2>Course Not Found</h2>
+        <a routerLink="/courses" class="btn btn-primary">Return to Catalog</a>
+      </div>
+    </div>
+  } @else {
+    <!-- Top Learning Navigation Header Bar -->
+    <header class="learning-top-bar">
+      <div class="top-bar-left">
+        <a [routerLink]="['/courses', course.id]" class="back-to-course-btn" title="Back to Course Overview">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+        </a>
+
+        <div class="learning-title-group">
+          <span class="course-badge-small">{{ course.subjectTag }}</span>
+          <h2 class="learning-course-title">{{ course.title }}</h2>
+        </div>
+      </div>
+
+      <div class="top-bar-center">
+        <div class="overall-progress-pill">
+          <div class="progress-track" style="width: 120px; height: 6px;">
+            <div class="progress-fill" [style.width.%]="course.progressPercentage"></div>
+          </div>
+          <span class="progress-val">{{ course.progressPercentage }}% Complete</span>
+        </div>
+      </div>
+
+      <div class="top-bar-right">
+        <button 
+          type="button" 
+          class="btn btn-sm toggle-sidebar-btn" 
+          [class.active]="sidebarOpen"
+          (click)="toggleSidebar()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+            <line x1="9" y1="3" x2="9" y2="21"/>
+          </svg>
+          {{ sidebarOpen ? 'Hide Syllabus' : 'Show Syllabus' }}
+        </button>
+
+        <a routerLink="/dashboard" class="btn btn-ghost btn-sm">Exit</a>
+      </div>
+    </header>
+
+    <!-- Main Player Workspace -->
+    <div class="player-main-container" [class.sidebar-collapsed]="!sidebarOpen">
+      <!-- Lesson Content Pane -->
+      <main class="lesson-content-viewport">
+        @if (currentLesson) {
+          <div class="lesson-content-inner">
+            <!-- Lesson Header -->
+            <div class="lesson-header-area">
+              <div class="lesson-meta-bar">
+                <span class="badge badge-primary">
+                  Chapter {{ currentChapterIndex + 1 }} • Lesson {{ currentLessonIndex + 1 }}
+                </span>
+                <span class="lesson-duration-tag">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="12 6 12 12 16 14"/>
+                  </svg>
+                  {{ currentLesson.durationMinutes }} minutes study
+                </span>
+                @if (currentLesson.completed) {
+                  <span class="badge badge-strong">
+                    ✓ Completed
+                  </span>
+                }
+              </div>
+
+              <h1 class="active-lesson-title">{{ currentLesson.title }}</h1>
+              <p class="active-lesson-summary">{{ currentLesson.summary }}</p>
+            </div>
+
+            <!-- Video Player Interactive Showcase -->
+            <div class="media-player-box">
+              <div class="video-screen" [class.playing]="isVideoPlaying">
+                <div class="video-overlay" (click)="toggleVideoPlay()">
+                  @if (!isVideoPlaying) {
+                    <div class="play-button-circle">
+                      <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+                        <polygon points="5 3 19 12 5 21 5 3"/>
+                      </svg>
+                    </div>
+                    <span class="video-caption">Click to Stream High-Definition Lecture</span>
+                  } @else {
+                    <div class="live-stream-badge">
+                      <span class="pulse-red"></span> Streaming Video Lecture
+                    </div>
+                  }
+                </div>
+
+                <div class="video-mock-controls">
+                  <button type="button" class="video-ctrl-btn" (click)="toggleVideoPlay()">
+                    @if (isVideoPlaying) {
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                        <rect x="6" y="4" width="4" height="16"/>
+                        <rect x="14" y="4" width="4" height="16"/>
+                      </svg>
+                    } @else {
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                        <polygon points="5 3 19 12 5 21 5 3"/>
+                      </svg>
+                    }
+                  </button>
+                  <div class="video-scrubber">
+                    <div class="video-scrubber-filled" [style.width.%]="isVideoPlaying ? 65 : 15"></div>
+                  </div>
+                  <span class="video-timestamp">{{ isVideoPlaying ? '14:20' : '02:45' }} / {{ currentLesson.durationMinutes }}:00</span>
+                  <span class="video-quality">1080p HD</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Text Content & Code Snippets -->
+            <article class="lesson-reading-article">
+              <div class="article-markdown" [innerHTML]="currentLesson.content"></div>
+
+              <!-- Key Takeaways Box -->
+              <div class="takeaways-box">
+                <h4 class="takeaways-title">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="16" x2="12" y2="12"/>
+                    <line x1="12" y1="8" x2="12.01" y2="8"/>
+                  </svg>
+                  Key Architectural Takeaways
+                </h4>
+                <ul class="takeaways-list">
+                  @for (item of currentLesson.keyTakeaways; track item) {
+                    <li>{{ item }}</li>
+                  }
+                </ul>
+              </div>
+            </article>
+
+            <!-- Bottom Navigation & Completion Controls -->
+            <div class="lesson-bottom-bar">
+              <button 
+                type="button" 
+                class="btn btn-outline" 
+                [disabled]="currentFlatIndex === 0"
+                (click)="goToPreviousLesson()">
+                ← Previous Lesson
+              </button>
+
+              <div class="completion-center-action">
+                <button 
+                  type="button" 
+                  class="btn" 
+                  [class.btn-primary]="!currentLesson.completed"
+                  [class.btn-secondary]="currentLesson.completed"
+                  (click)="markCurrentLessonComplete()">
+                  @if (currentLesson.completed) {
+                    <span>✓ Marked as Completed</span>
+                  } @else {
+                    <span>Mark as Completed & Update Progress</span>
+                  }
+                </button>
+              </div>
+
+              <button 
+                type="button" 
+                class="btn btn-outline" 
+                [disabled]="currentFlatIndex === allLessonsFlat.length - 1"
+                (click)="goToNextLesson()">
+                Next Lesson →
+              </button>
+            </div>
+          </div>
+        }
+      </main>
+
+      <!-- Sidebar: Syllabus & Chapters Navigation -->
+      @if (sidebarOpen) {
+        <aside class="learning-syllabus-sidebar">
+          <div class="sidebar-header">
+            <h4 class="sidebar-heading">Course Curriculum</h4>
+            <span class="sidebar-progress-badge">{{ course.progressPercentage }}% Completed</span>
+          </div>
+
+          <div class="sidebar-chapters-list">
+            @for (chapter of course.chapters; track chapter.id; let chIdx = $index) {
+              <div class="sidebar-chapter-group">
+                <div class="sidebar-chapter-header">
+                  <span class="sb-ch-number">CH {{ chIdx + 1 }}</span>
+                  <span class="sb-ch-title">{{ chapter.title }}</span>
+                </div>
+
+                <div class="sidebar-lessons-nav">
+                  @for (lesson of chapter.lessons; track lesson.id; let lIdx = $index) {
+                    <button 
+                      type="button" 
+                      class="sb-lesson-nav-btn"
+                      [class.active]="currentLesson?.id === lesson.id"
+                      [class.completed]="lesson.completed"
+                      (click)="setCurrentLesson(lesson, chIdx, lIdx)">
+                      
+                      <div class="sb-check-circle">
+                        @if (lesson.completed) {
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                            <polyline points="20 6 9 17 4 12"/>
+                          </svg>
+                        } @else {
+                          <span>{{ lIdx + 1 }}</span>
+                        }
+                      </div>
+
+                      <div class="sb-lesson-titles">
+                        <span class="sb-lesson-name">{{ lesson.title }}</span>
+                        <span class="sb-lesson-time">{{ lesson.durationMinutes }}m</span>
+                      </div>
+                    </button>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        </aside>
+      }
+    </div>
+  }
+</div>

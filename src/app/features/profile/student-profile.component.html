@@ -1,0 +1,191 @@
+<div class="page-wrapper container">
+  <!-- Profile Page Header -->
+  <div class="profile-header-bar">
+    <div>
+      <span class="badge badge-primary">Account & Institutional Settings</span>
+      <h1 class="page-title">Student Profile & Project Registry</h1>
+      <p class="page-desc">
+        Manage academic identity, review five-member project responsibilities, and configure team member details.
+      </p>
+    </div>
+
+    <button type="button" class="btn btn-outline" (click)="resetAllDemoData()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+        <path d="M3 3v5h5"/>
+      </svg>
+      Reset Demo Data
+    </button>
+  </div>
+
+  @if (saveSuccess) {
+    <div class="alert-box alert-success">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+        <polyline points="22 4 12 14.01 9 11.01"/>
+      </svg>
+      <span>Changes successfully persisted to browser LocalStorage.</span>
+    </div>
+  }
+
+  <!-- 2 Column Profile Grid -->
+  <div class="profile-grid">
+    <!-- Left Column: Student Details -->
+    <div class="grid-col-profile">
+      <div class="saas-card student-card">
+        <div class="student-card-header">
+          <img 
+            [src]="currentUser?.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80'" 
+            [alt]="currentUser?.name" 
+            class="student-avatar-big" />
+          
+          <div class="student-header-meta">
+            <h2 class="student-fullname">{{ currentUser?.name }}</h2>
+            <span class="student-email-tag">{{ currentUser?.email }}</span>
+            <div class="student-id-chip">Student ID: {{ currentUser?.studentId }}</div>
+          </div>
+
+          <button type="button" class="btn btn-outline btn-sm edit-toggle-btn" (click)="toggleEditMode()">
+            {{ editMode ? 'Cancel Editing' : 'Edit Profile' }}
+          </button>
+        </div>
+
+        @if (!editMode) {
+          <div class="student-info-body">
+            <div class="info-row">
+              <span class="info-label">Academic Department:</span>
+              <span class="info-value">{{ currentUser?.department }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Student ID:</span>
+              <span class="info-value font-mono">{{ currentUser?.studentId }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Enrolled Since:</span>
+              <span class="info-value">{{ currentUser?.joinedDate }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">System Role:</span>
+              <span class="info-value">
+                <span class="badge badge-accent">Undergraduate Scholar (CSE)</span>
+              </span>
+            </div>
+            <div class="info-bio-box">
+              <span class="info-label">Academic Biography:</span>
+              <p class="bio-text">{{ currentUser?.bio }}</p>
+            </div>
+          </div>
+        } @else {
+          <!-- Edit Profile Form -->
+          <form [formGroup]="profileForm" (ngSubmit)="onSaveProfile()" class="edit-profile-form">
+            <div class="form-group">
+              <label class="form-label" for="edit-name">Full Name</label>
+              <input id="edit-name" type="text" class="form-input" formControlName="name" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="edit-email">Academic Email</label>
+              <input id="edit-email" type="email" class="form-input" formControlName="email" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="edit-dept">Department</label>
+              <input id="edit-dept" type="text" class="form-input" formControlName="department" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="edit-id">Student ID</label>
+              <input id="edit-id" type="text" class="form-input" formControlName="studentId" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="edit-bio">Academic Biography</label>
+              <textarea id="edit-bio" class="form-textarea" rows="3" formControlName="bio"></textarea>
+            </div>
+
+            <div class="form-actions-row">
+              <button type="button" class="btn btn-outline btn-sm" (click)="toggleEditMode()">Cancel</button>
+              <button type="submit" class="btn btn-primary btn-sm">Save Changes</button>
+            </div>
+          </form>
+        }
+      </div>
+    </div>
+
+    <!-- Right Column: Five-Member Project Team Distribution -->
+    <div class="grid-col-team">
+      <div class="saas-card team-spec-card">
+        <div class="team-spec-header">
+          <div>
+            <span class="badge badge-primary">Project Organization</span>
+            <h3 class="team-spec-title">Five-Member Project Team Distribution</h3>
+            <p class="team-spec-desc">
+              Academic division of responsibilities. Click "Edit Name" to customize team member credentials.
+            </p>
+          </div>
+        </div>
+
+        <!-- ONE single list, identical row size for all five -->
+        <div class="team-members-list">
+          @for (member of teamMembers; track member.id) {
+            <div class="team-member-item">
+              <div class="member-row-layout">
+                <!-- Initials Avatar -->
+                <div class="member-avatar-circle" aria-hidden="true">
+                  {{ getInitials(member.name) }}
+                </div>
+
+                <!-- Member Content Details -->
+                <div class="member-main-details">
+                  <div class="member-header-line">
+                    @if (editingMemberId !== member.id) {
+                      <div class="member-name-wrap">
+                        <strong class="member-name-text">{{ member.name }}</strong>
+                        <button type="button" class="btn btn-ghost btn-sm edit-name-btn" (click)="startEditMember(member)" aria-label="Edit member name">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 20h9"/>
+                            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                          </svg>
+                          Edit
+                        </button>
+                        @if (savedMemberId === member.id) {
+                          <span class="badge badge-strong inline-saved-badge">Saved</span>
+                        }
+                      </div>
+                    } @else {
+                      <div class="member-inline-edit">
+                        <input 
+                          type="text" 
+                          class="form-input form-input-sm member-name-input" 
+                          [(ngModel)]="editingName" 
+                          maxlength="40" 
+                          placeholder="Member Name"
+                          (keydown.enter)="saveMemberName(member)"
+                          (keydown.escape)="cancelEditMember()" />
+                        <div class="inline-edit-actions">
+                          <button type="button" class="btn btn-ghost btn-sm" (click)="cancelEditMember()">Cancel</button>
+                          <button type="button" class="btn btn-primary btn-sm" (click)="saveMemberName(member)">Save</button>
+                        </div>
+                      </div>
+                      @if (memberNameError) {
+                        <span class="inline-error-msg">{{ memberNameError }}</span>
+                      }
+                    }
+                  </div>
+
+                  <!-- Module Name -->
+                  <div class="member-module-line">
+                    <span class="member-module-tag">{{ member.module }}</span>
+                  </div>
+
+                  <!-- One-Line Summary -->
+                  <p class="member-summary-text">{{ member.summary }}</p>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

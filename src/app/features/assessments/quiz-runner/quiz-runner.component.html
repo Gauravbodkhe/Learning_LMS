@@ -1,0 +1,233 @@
+<div class="page-wrapper container">
+  @if (!quiz) {
+    <div class="saas-card not-found-card">
+      <h2>Assessment Not Found</h2>
+      <a routerLink="/assessments" class="btn btn-primary" style="margin-top: 1rem;">Back to Assessments</a>
+    </div>
+  } @else {
+    <!-- Breadcrumb / Header Top -->
+    <div class="quiz-runner-header">
+      <div class="quiz-header-meta">
+        <a routerLink="/assessments" class="btn btn-ghost btn-sm">← Back to Assessments</a>
+        <div class="quiz-info-pills">
+          <span class="badge badge-accent">{{ quiz.subject }}</span>
+          <span class="badge badge-primary">{{ quiz.difficulty }}</span>
+          <span class="badge badge-neutral">Passing threshold: {{ quiz.passPercentage }}%</span>
+        </div>
+      </div>
+
+      @if (!isSubmitted) {
+        <div class="timer-badge" [class.timer-urgent]="remainingSeconds < 120">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+          <span class="timer-text">{{ formattedTime }}</span>
+        </div>
+      }
+    </div>
+
+    <!-- Live Quiz Taking Mode -->
+    @if (!isSubmitted) {
+      <div class="quiz-active-layout">
+        <!-- Main Question Card -->
+        <div class="saas-card question-main-card">
+          <div class="question-progress-bar">
+            <div class="progress-track" style="height: 6px;">
+              <div 
+                class="progress-fill" 
+                [style.width.%]="((currentQuestionIndex + 1) / quiz.questions.length) * 100">
+              </div>
+            </div>
+            <span class="q-progress-text">
+              Question {{ currentQuestionIndex + 1 }} of {{ quiz.questions.length }}
+            </span>
+          </div>
+
+          <div class="question-box">
+            <h2 class="question-text">
+              {{ quiz.questions[currentQuestionIndex].questionText }}
+            </h2>
+
+            <!-- Options Grid -->
+            <div class="options-list">
+              @for (option of quiz.questions[currentQuestionIndex].options; track option; let optIdx = $index) {
+                <button 
+                  type="button" 
+                  class="option-btn" 
+                  [class.selected]="isOptionSelected(optIdx)"
+                  (click)="selectOption(optIdx)">
+                  <div class="option-indicator">
+                    {{ ['A', 'B', 'C', 'D'][optIdx] }}
+                  </div>
+                  <span class="option-text">{{ option }}</span>
+                </button>
+              }
+            </div>
+          </div>
+
+          <!-- Bottom Navigation Bar -->
+          <div class="runner-nav-footer">
+            <button 
+              type="button" 
+              class="btn btn-outline" 
+              [disabled]="currentQuestionIndex === 0"
+              (click)="goToPreviousQuestion()">
+              ← Previous
+            </button>
+
+            <div class="footer-center-status">
+              <span class="status-summary">{{ answeredCount }} of {{ quiz.questions.length }} Answered</span>
+            </div>
+
+            @if (currentQuestionIndex < quiz.questions.length - 1) {
+              <button 
+                type="button" 
+                class="btn btn-primary" 
+                (click)="goToNextQuestion()">
+                Next Question →
+              </button>
+            } @else {
+              <button 
+                type="button" 
+                class="btn btn-accent" 
+                (click)="submitQuiz()">
+                Submit Assessment
+              </button>
+            }
+          </div>
+        </div>
+
+        <!-- Question Palette Sidebar -->
+        <aside class="saas-card question-palette-card">
+          <h4 class="palette-title">Question Palette</h4>
+          <div class="palette-grid">
+            @for (q of quiz.questions; track q.id; let idx = $index) {
+              <button 
+                type="button" 
+                class="palette-btn" 
+                [class.current]="currentQuestionIndex === idx"
+                [class.answered]="isQuestionAnswered(idx)"
+                (click)="jumpToQuestion(idx)">
+                {{ idx + 1 }}
+              </button>
+            }
+          </div>
+
+          <div class="palette-legend">
+            <div class="legend-item">
+              <span class="legend-swatch swatch-answered"></span>
+              <span>Answered</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-swatch swatch-unanswered"></span>
+              <span>Unanswered</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-swatch swatch-current"></span>
+              <span>Current</span>
+            </div>
+          </div>
+
+          <button 
+            type="button" 
+            class="btn btn-primary btn-block submit-side-btn" 
+            (click)="submitQuiz()">
+            Finish & Submit
+          </button>
+        </aside>
+      </div>
+    } @else {
+      <!-- Results & Detailed Explanations Mode -->
+      <div class="quiz-results-container">
+        <!-- Result Score Banner -->
+        <div class="saas-card result-summary-banner" [class.result-passed]="quizAttemptResult?.passed" [class.result-failed]="!quizAttemptResult?.passed">
+          <div class="result-banner-left">
+            <div class="result-badge-pill">
+              {{ quizAttemptResult?.passed ? 'ASSESSMENT PASSED' : 'REVISION RECOMMENDED' }}
+            </div>
+            <h2 class="result-title">
+              {{ quizAttemptResult?.passed ? 'Competency Criteria Fulfilled!' : 'Remedial Review Recommended' }}
+            </h2>
+            <p class="result-desc">
+              {{ quizAttemptResult?.passed 
+                  ? 'Your performance was logged. The adaptive learning engine has updated your subject rating and marked milestone criteria as fulfilled.' 
+                  : 'Your assessment telemetry indicated knowledge gaps. The rule-based adaptive engine has curated remedial topics below.' }}
+            </p>
+
+            <div class="result-actions-row">
+              <a routerLink="/adaptive-learning" class="btn btn-primary">
+                View Adaptive Learning Dashboard →
+              </a>
+              <button type="button" class="btn btn-outline" (click)="retakeQuiz()">
+                Retake Quiz
+              </button>
+            </div>
+          </div>
+
+          <div class="result-score-circle">
+            <span class="score-circle-pct">{{ quizAttemptResult?.scorePercentage }}%</span>
+            <span class="score-circle-sub">{{ quizAttemptResult?.correctAnswersCount }} / {{ quizAttemptResult?.totalQuestions }} Correct</span>
+          </div>
+        </div>
+
+        <!-- Detailed Question by Question Review -->
+        <section class="detailed-review-section">
+          <h3 class="review-heading">Detailed Question Review & Explanations</h3>
+
+          <div class="review-questions-list">
+            @for (question of quiz.questions; track question.id; let qIdx = $index) {
+              @let userSelected = selectedAnswers[qIdx];
+              @let isCorrect = userSelected === question.correctOptionIndex;
+
+              <div class="saas-card review-card" [class.review-card-correct]="isCorrect" [class.review-card-incorrect]="!isCorrect">
+                <div class="review-card-top">
+                  <span class="badge" [class.badge-strong]="isCorrect" [class.badge-weak]="!isCorrect">
+                    Question {{ qIdx + 1 }} • {{ isCorrect ? 'Correct (+20%)' : 'Incorrect (0%)' }}
+                  </span>
+                </div>
+
+                <h4 class="review-question-text">{{ question.questionText }}</h4>
+
+                <div class="review-options-list">
+                  @for (option of question.options; track option; let optIdx = $index) {
+                    <div 
+                      class="review-option-row"
+                      [class.opt-correct]="optIdx === question.correctOptionIndex"
+                      [class.opt-user-wrong]="userSelected === optIdx && !isCorrect">
+                      
+                      <div class="opt-label-chip">
+                        {{ ['A', 'B', 'C', 'D'][optIdx] }}
+                      </div>
+                      <span class="opt-text">{{ option }}</span>
+
+                      @if (optIdx === question.correctOptionIndex) {
+                        <span class="correct-tag">✓ Correct Answer</span>
+                      }
+                      @if (userSelected === optIdx && !isCorrect) {
+                        <span class="wrong-tag">✕ Your Selection</span>
+                      }
+                    </div>
+                  }
+                </div>
+
+                <!-- Explanation Box -->
+                <div class="explanation-box">
+                  <div class="exp-title">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="10"/>
+                      <line x1="12" y1="16" x2="12" y2="12"/>
+                      <line x1="12" y1="8" x2="12.01" y2="8"/>
+                    </svg>
+                    Pedagogical Explanation:
+                  </div>
+                  <p class="exp-text">{{ question.explanation }}</p>
+                </div>
+              </div>
+            }
+          </div>
+        </section>
+      </div>
+    }
+  }
+</div>

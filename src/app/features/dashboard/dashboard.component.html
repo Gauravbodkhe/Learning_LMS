@@ -1,0 +1,337 @@
+<div class="page-wrapper container">
+  <!-- Welcome Hero Banner -->
+  <section class="welcome-hero saas-card">
+    <div class="welcome-content">
+      <div class="date-badge">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+          <line x1="16" y1="2" x2="16" y2="6"/>
+          <line x1="8" y1="2" x2="8" y2="6"/>
+          <line x1="3" y1="10" x2="21" y2="10"/>
+        </svg>
+        <span>{{ currentDate }}</span>
+      </div>
+
+      <h1 class="welcome-heading">
+        Welcome back, <span class="highlight-name">{{ (authService.currentUser$ | async)?.name || 'Student' }}</span>!
+      </h1>
+      <p class="welcome-motivation">{{ getMotivationalMessage() }}</p>
+
+      <div class="hero-actions">
+        <button type="button" class="btn btn-primary" (click)="continueNextAvailableLesson()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="5 3 19 12 5 21 5 3"/>
+          </svg>
+          Continue Learning
+        </button>
+
+        <a routerLink="/adaptive-learning" class="btn btn-secondary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+          </svg>
+          View Adaptive Recommendations
+        </a>
+      </div>
+
+      <!-- Shantanu Gadhave: Last-visited course on dashboard hero -->
+      @if (lastVisitedCourse) {
+        <div class="last-visited-hero-row">
+          <span class="last-visited-tag">Last Visited:</span>
+          <span class="last-visited-course-name">{{ lastVisitedCourse.title }}</span>
+          <span class="badge badge-primary">{{ lastVisitedCourse.progressPercentage }}% Completed</span>
+        </div>
+      }
+    </div>
+
+    <div class="hero-graphic">
+      <div class="adaptive-score-orb">
+        <span class="orb-label">Average Score</span>
+        <span class="orb-score">{{ stats.averageQuizScore }}%</span>
+        <span class="orb-status badge badge-strong">Active Trajectory</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Statistics Overview Grid (Shantanu Gadhave: animated count-up numbers) -->
+  <section class="stats-grid">
+    <!-- Stat 1 -->
+    <div class="saas-card stat-card">
+      <div class="stat-icon icon-blue">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/>
+        </svg>
+      </div>
+      <div class="stat-meta">
+        <span class="stat-label">Enrolled Courses</span>
+        <span class="stat-number">{{ animatedStats.totalEnrolledCourses }}</span>
+        <span class="stat-subtext">Active academic subjects</span>
+      </div>
+    </div>
+
+    <!-- Stat 2 -->
+    <div class="saas-card stat-card">
+      <div class="stat-icon icon-green">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+          <polyline points="22 4 12 14.01 9 11.01"/>
+        </svg>
+      </div>
+      <div class="stat-meta">
+        <span class="stat-label">Courses Completed</span>
+        <span class="stat-number">{{ animatedStats.completedCoursesCount }}</span>
+        <span class="stat-subtext">{{ stats.completedCoursesCount > 0 ? '100% curriculum fulfilled' : 'Keep going!' }}</span>
+      </div>
+    </div>
+
+    <!-- Stat 3 -->
+    <div class="saas-card stat-card">
+      <div class="stat-icon icon-purple">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="m9 12 2 2 4-4"/>
+        </svg>
+      </div>
+      <div class="stat-meta">
+        <span class="stat-label">Average Quiz Score</span>
+        <span class="stat-number">{{ animatedStats.averageQuizScore }}%</span>
+        <span class="stat-subtext">Across evaluated tests</span>
+      </div>
+    </div>
+
+    <!-- Stat 4 -->
+    <div class="saas-card stat-card">
+      <div class="stat-icon icon-amber">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+          <polyline points="17 6 23 6 23 12"/>
+        </svg>
+      </div>
+      <div class="stat-meta">
+        <span class="stat-label">Overall Progress</span>
+        <span class="stat-number">{{ animatedStats.overallProgressPercentage }}%</span>
+        <div class="progress-track" style="margin-top: 0.5rem; height: 6px;">
+          <div class="progress-fill" [style.width.%]="animatedStats.overallProgressPercentage"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content Layout (2 Column Split) -->
+  <div class="dashboard-main-grid">
+    <!-- Left Column: Courses & Learning Analytics -->
+    <div class="grid-left-col">
+      <!-- My Learning Section -->
+      <section class="section-card saas-card">
+        <div class="section-header">
+          <div>
+            <h3 class="section-title">My Learning</h3>
+            <p class="section-subtitle">Continue your active courses and modules</p>
+          </div>
+          <a routerLink="/courses" class="btn btn-outline btn-sm">Explore Catalog</a>
+        </div>
+
+        @if (enrolledCourses.length === 0) {
+          <div class="empty-state-box">
+            <p>You haven't enrolled in any courses yet.</p>
+            <a routerLink="/courses" class="btn btn-primary btn-sm" style="margin-top: 0.75rem;">Browse Courses</a>
+          </div>
+        } @else {
+          <div class="my-courses-list">
+            @for (course of enrolledCourses; track course.id) {
+              <div class="course-learning-item">
+                <img [src]="course.thumbnail" [alt]="course.title" class="course-item-thumb" (error)="onThumbError($event)" />
+                <div class="course-item-body">
+                  <div class="course-item-top">
+                    <span class="badge badge-primary">{{ course.category }}</span>
+                    <span class="course-instructor">By {{ course.instructor.name }}</span>
+                  </div>
+                  <h4 class="course-item-title">{{ course.title }}</h4>
+
+                  <div class="progress-status-row">
+                    <div class="progress-track">
+                      <div class="progress-fill" [style.width.%]="course.progressPercentage"></div>
+                    </div>
+                    <span class="progress-text">{{ getCompletedLessonsCount(course) }} of {{ getLessonsCount(course) }} lessons completed ({{ course.progressPercentage }}%)</span>
+                  </div>
+                </div>
+
+                <div class="course-item-action">
+                  <button type="button" class="btn btn-primary btn-sm" (click)="openCourseLearning(course.id)">
+                    Continue
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </section>
+
+      <!-- Learning Analytics Section -->
+      <section class="section-card saas-card">
+        <div class="section-header">
+          <div>
+            <h3 class="section-title">Learning Analytics & Activity</h3>
+            <p class="section-subtitle">Weekly commitment and subject competency trends</p>
+          </div>
+          <span class="badge badge-accent">Live Telemetry</span>
+        </div>
+
+        <!-- Weekly Study Hours Bar Chart -->
+        <div class="chart-container-box">
+          <div class="chart-header-row">
+            <span class="chart-label">Weekly Study Hours (22.0 hrs Total)</span>
+            <span class="chart-legend"><span class="legend-dot"></span> Recorded Study Time</span>
+          </div>
+
+          <div class="bar-chart-visual">
+            @for (bar of weeklyActivity; track bar.day) {
+              <div 
+                class="bar-col"
+                (mouseenter)="hoveredDay = bar.day"
+                (mouseleave)="hoveredDay = null">
+                <div class="bar-value-tooltip" [class.tooltip-visible]="hoveredDay === bar.day">{{ bar.hours }}h</div>
+                <div class="bar-track">
+                  <div class="bar-fill" [style.height.%]="bar.heightPct" [class.bar-hovered]="hoveredDay === bar.day"></div>
+                </div>
+                <span class="bar-day">{{ bar.day }}</span>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Subject Performance Bars -->
+        <div class="subject-performance-section">
+          <h4 class="sub-section-title">Subject-wise Competency Breakdown</h4>
+          <div class="subject-bars-list">
+            @for (perf of subjectPerformances; track perf.subject) {
+              <div class="subject-bar-item">
+                <div class="subject-bar-header">
+                  <span class="subject-name">{{ perf.subject }}</span>
+                  <div class="subject-score-badge">
+                    <span 
+                      class="badge" 
+                      [class.badge-strong]="perf.strengthCategory === 'Strong'"
+                      [class.badge-average]="perf.strengthCategory === 'Average'"
+                      [class.badge-weak]="perf.strengthCategory === 'Weak'">
+                      {{ perf.strengthCategory }} ({{ perf.score }}%)
+                    </span>
+                  </div>
+                </div>
+                <div class="progress-track">
+                  <div 
+                    class="progress-fill"
+                    [class.progress-fill-success]="perf.strengthCategory === 'Strong'"
+                    [class.progress-fill-warning]="perf.strengthCategory === 'Average'"
+                    [class.progress-fill-danger]="perf.strengthCategory === 'Weak'"
+                    [style.width.%]="perf.score">
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Right Column: Adaptive Engine Highlights & Activities -->
+    <div class="grid-right-col">
+      <!-- Adaptive Recommendation Spotlight -->
+      <section class="section-card saas-card adaptive-spotlight-card">
+        <div class="section-header">
+          <div class="spotlight-title-group">
+            <div class="spotlight-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="section-title">Adaptive Suggestions</h3>
+              <p class="section-subtitle">Targeted actions calculated by rule-based engine</p>
+            </div>
+          </div>
+          <a routerLink="/adaptive-learning" class="text-link-btn">Full Matrix →</a>
+        </div>
+
+        <div class="recommendations-compact-list">
+          @for (rec of topRecommendations; track rec.id) {
+            <div class="rec-card-compact" [class.priority-high]="rec.priority === 'High'">
+              <div class="rec-top-row">
+                <span class="badge" [class.badge-weak]="rec.priority === 'High'" [class.badge-average]="rec.priority !== 'High'">
+                  {{ rec.subject }} • {{ rec.currentPerformance }}%
+                </span>
+                <span class="rec-rule-tag">{{ rec.priority }} Priority</span>
+              </div>
+              <h4 class="rec-title">{{ rec.recommendationTitle }}</h4>
+              <p class="rec-reason">{{ rec.reason }}</p>
+              
+              <div class="rec-action-row">
+                @if (rec.suggestedCourseId) {
+                  <button type="button" class="btn btn-primary btn-sm" (click)="openCourseLearning(rec.suggestedCourseId)">
+                    {{ rec.recommendedAction }}
+                  </button>
+                } @else {
+                  <a routerLink="/adaptive-learning" class="btn btn-outline btn-sm">Explore Action</a>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- Upcoming Quizzes & Activities -->
+      <section class="section-card saas-card">
+        <div class="section-header">
+          <h3 class="section-title">Upcoming Evaluations</h3>
+          <a routerLink="/assessments" class="btn btn-ghost btn-sm">All Quizzes</a>
+        </div>
+
+        <div class="upcoming-quizzes-list">
+          <div class="upcoming-item">
+            <div class="upcoming-date">
+              <span class="date-month">FEB</span>
+              <span class="date-day">20</span>
+            </div>
+            <div class="upcoming-info">
+              <h5 class="upcoming-title">Angular Standalone & Core Architecture</h5>
+              <span class="upcoming-meta">5 Questions • Pass: 60%</span>
+            </div>
+            <button type="button" class="btn btn-outline btn-sm" (click)="openQuiz('Angular')">Attempt</button>
+          </div>
+
+          <div class="upcoming-item">
+            <div class="upcoming-date">
+              <span class="date-month">FEB</span>
+              <span class="date-day">22</span>
+            </div>
+            <div class="upcoming-info">
+              <h5 class="upcoming-title">Relational DBMS & SQL Optimization</h5>
+              <span class="upcoming-meta">5 Questions • Pass: 60%</span>
+            </div>
+            <button type="button" class="btn btn-outline btn-sm" (click)="openQuiz('Database Management')">Attempt</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Recent Activity Timeline -->
+      <section class="section-card saas-card">
+        <div class="section-header">
+          <h3 class="section-title">Recent Activity</h3>
+          <span class="badge badge-neutral">History</span>
+        </div>
+
+        <div class="activity-timeline">
+          @for (act of recentActivities; track act.id) {
+            <div class="activity-timeline-item">
+              <div class="timeline-dot" [class.quiz-dot]="act.type === 'quiz'" [class.lesson-dot]="act.type === 'lesson'"></div>
+              <div class="timeline-content">
+                <span class="activity-title">{{ act.title }}</span>
+                <span class="activity-desc">{{ act.description }}</span>
+                <span class="activity-time">{{ act.timestamp }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+    </div>
+  </div>
+</div>

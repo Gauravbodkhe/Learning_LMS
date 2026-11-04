@@ -1,0 +1,179 @@
+<!-- Mobile Overlay Backdrop -->
+@if (sidebar.isMobileOpen()) {
+  <div 
+    class="sidebar-backdrop" 
+    (click)="sidebar.closeMobile()"
+    aria-hidden="true">
+  </div>
+}
+
+<aside 
+  class="app-sidebar" 
+  [class.collapsed]="sidebar.isCollapsed()"
+  [class.mobile-open]="sidebar.isMobileOpen()"
+  aria-label="Main Navigation">
+  
+  <!-- Sidebar Header / Brand -->
+  <div class="sidebar-header">
+    <a routerLink="/dashboard" class="brand-link" (click)="onNavClick()" title="AdaptiveLMS Dashboard">
+      <div class="brand-mark" aria-hidden="true">
+        <!-- Human clean geometric mark -->
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/>
+          <path d="M6 6h10"/>
+          <path d="M6 10h10"/>
+          <path d="m13 15 2 2 4-4"/>
+        </svg>
+      </div>
+      <span class="brand-wordmark">Adaptive<span class="brand-sub">LMS</span></span>
+    </a>
+  </div>
+
+  <!-- Navigation Groups -->
+  <nav class="sidebar-nav">
+    <!-- Group: Learn -->
+    <div class="nav-group">
+      <span class="group-label">Learn</span>
+
+      <a 
+        routerLink="/dashboard" 
+        routerLinkActive="active" 
+        class="nav-link"
+        (click)="onNavClick()"
+        [attr.data-tooltip]="sidebar.isCollapsed() ? 'Dashboard' : null"
+        aria-label="Dashboard">
+        <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect width="7" height="9" x="3" y="3" rx="1"/>
+          <rect width="7" height="5" x="14" y="3" rx="1"/>
+          <rect width="7" height="9" x="14" y="12" rx="1"/>
+          <rect width="7" height="5" x="3" y="16" rx="1"/>
+        </svg>
+        <span class="nav-label">Dashboard</span>
+      </a>
+
+      <a 
+        routerLink="/my-learning" 
+        routerLinkActive="active" 
+        class="nav-link"
+        (click)="onNavClick()"
+        [attr.data-tooltip]="sidebar.isCollapsed() ? 'My Courses' : null"
+        aria-label="My Courses">
+        <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+          <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+        </svg>
+        <span class="nav-label">My Courses</span>
+      </a>
+
+      <a 
+        routerLink="/courses" 
+        routerLinkActive="active" 
+        class="nav-link"
+        (click)="onNavClick()"
+        [attr.data-tooltip]="sidebar.isCollapsed() ? 'Course Catalog' : null"
+        aria-label="Course Catalog">
+        <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m16 6 4 14"/>
+          <path d="M12 6v14"/>
+          <path d="M8 8v12"/>
+          <path d="M4 4v16"/>
+        </svg>
+        <span class="nav-label">Catalog</span>
+      </a>
+
+      <a 
+        routerLink="/assessments" 
+        routerLinkActive="active" 
+        class="nav-link"
+        (click)="onNavClick()"
+        [attr.data-tooltip]="sidebar.isCollapsed() ? 'Assessments' : null"
+        aria-label="Assessments">
+        <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="m9 12 2 2 4-4"/>
+        </svg>
+        <span class="nav-label">Assessments</span>
+      </a>
+
+      <a 
+        routerLink="/adaptive-learning" 
+        routerLinkActive="active" 
+        class="nav-link"
+        (click)="onNavClick()"
+        [attr.data-tooltip]="sidebar.isCollapsed() ? 'Adaptive Engine' : null"
+        aria-label="Adaptive Engine">
+        <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3L12 3Z"/>
+        </svg>
+        <span class="nav-label">Adaptive Engine</span>
+      </a>
+    </div>
+
+    <div class="nav-divider"></div>
+
+    <!-- Group: Account -->
+    <div class="nav-group">
+      <span class="group-label">Account</span>
+
+      <a 
+        routerLink="/profile" 
+        routerLinkActive="active" 
+        class="nav-link"
+        (click)="onNavClick()"
+        [attr.data-tooltip]="sidebar.isCollapsed() ? 'Student Profile' : null"
+        aria-label="Student Profile">
+        <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+        <span class="nav-label">Profile</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Sidebar Footer Utilities -->
+  <div class="sidebar-footer">
+    <!-- Theme Toggle Button -->
+    <button 
+      type="button" 
+      class="footer-btn theme-btn"
+      (click)="theme.toggleTheme()"
+      [attr.aria-label]="theme.isDark() ? 'Switch to light theme' : 'Switch to dark theme'"
+      [attr.data-tooltip]="sidebar.isCollapsed() ? (theme.isDark() ? 'Light theme' : 'Dark theme') : null">
+      <div class="icon-swap-wrapper">
+        @if (theme.isDark()) {
+          <svg class="footer-icon sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="4"/>
+            <path d="M12 2v2"/>
+            <path d="M12 20v2"/>
+            <path d="m4.93 4.93 1.41 1.41"/>
+            <path d="m17.66 17.66 1.41 1.41"/>
+            <path d="M2 12h2"/>
+            <path d="M20 12h2"/>
+            <path d="m6.34 17.66-1.41 1.41"/>
+            <path d="m19.07 4.93-1.41 1.41"/>
+          </svg>
+        } @else {
+          <svg class="footer-icon moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+          </svg>
+        }
+      </div>
+      <span class="footer-label">{{ theme.isDark() ? 'Light mode' : 'Dark mode' }}</span>
+    </button>
+
+    <!-- Collapse Toggle Button -->
+    <button 
+      type="button" 
+      class="footer-btn collapse-btn"
+      (click)="sidebar.toggleCollapse()"
+      [attr.aria-label]="sidebar.isCollapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
+      [attr.data-tooltip]="sidebar.isCollapsed() ? 'Expand ( [ )' : null">
+      <svg class="footer-icon chevron-icon" [class.rotated]="sidebar.isCollapsed()" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m15 18-6-6 6-6"/>
+      </svg>
+      <span class="footer-label">Collapse</span>
+      <kbd class="shortcut-hint" aria-hidden="true">[</kbd>
+    </button>
+  </div>
+</aside>

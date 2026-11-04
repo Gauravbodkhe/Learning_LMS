@@ -1,0 +1,26 @@
+<div 
+  class="app-shell" 
+  [style.--sidebar-w]="(auth.currentUser$ | async) ? (sidebar.isCollapsed() ? '64px' : '240px') : '0px'"
+  [class.has-sidebar]="auth.currentUser$ | async">
+  
+  @if (auth.currentUser$ | async) {
+    <app-sidebar></app-sidebar>
+  }
+
+  <div class="app-main-pane">
+    <app-header></app-header>
+    <main class="app-main-content">
+      <router-outlet></router-outlet>
+    </main>
+    <app-footer></app-footer>
+  </div>
+</div>
+
+<!-- Global Toast Container (Gaurav Bodkhe) -->
+<div class="toast-container" aria-live="polite">
+  @for (toast of (toastService.toasts$ | async); track toast.id) {
+    <div class="toast-item" [class.toast-success]="toast.type === 'success'" [class.toast-error]="toast.type === 'error'">
+      <span>{{ toast.text }}</span>
+    </div>
+  }
+</div>
