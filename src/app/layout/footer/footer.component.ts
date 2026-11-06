@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TeamService } from '../../core/services/team.service';
 
 @Component({
   selector: 'app-footer',
@@ -8,7 +9,13 @@ import { CommonModule } from '@angular/common';
   template: `
     <footer class="app-footer">
       <div class="footer-container">
-        <span class="footer-credits">M1: Gaurav Bodkhe · M2: Shantanu Gadhave · M3: Samarth Tanpure · M4: Pranav Pagar · M5: Pranav Pagire</span>
+        @if (teamService.team$ | async; as members) {
+          <span class="footer-credits">
+            @for (m of members; track m.id; let last = $last) {
+              {{ m.id.toUpperCase() }}: {{ m.name }}{{ !last ? ' · ' : '' }}
+            }
+          </span>
+        }
       </div>
     </footer>
   `,
@@ -43,4 +50,6 @@ import { CommonModule } from '@angular/common';
     }
   `]
 })
-export class FooterComponent {}
+export class FooterComponent {
+  public teamService = inject(TeamService);
+}
