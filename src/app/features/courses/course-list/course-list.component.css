@@ -109,10 +109,10 @@
 }
 
 .category-pill.active {
-  background: var(--accent-subtle);
-  color: var(--accent);
+  background: var(--accent-soft-bg);
+  color: var(--accent-soft-text);
   border-color: var(--accent-border);
-  font-weight: 600;
+  font-weight: 500;
 }
 
 /* Empty State */
@@ -200,13 +200,13 @@
   background: var(--bg-surface);
   border: 1px solid var(--border);
   color: var(--text-primary);
-  font-size: 0.725rem;
-  font-weight: 700;
-  text-transform: uppercase;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: none;
   padding: 0.25rem 0.65rem;
   border-radius: var(--radius-sm);
-  letter-spacing: 0.05em;
-  box-shadow: var(--shadow-sm);
+  letter-spacing: 0.01em;
+  box-shadow: none;
 }
 
 .course-card-content {
@@ -305,7 +305,8 @@
 
 .prog-pct {
   font-weight: 700;
-  color: var(--color-primary);
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
 }
 
 .course-card-actions {

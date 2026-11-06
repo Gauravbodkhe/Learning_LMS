@@ -93,11 +93,11 @@
 }
 
 .orb-label {
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-muted);
+  text-transform: none;
+  letter-spacing: 0.01em;
+  color: var(--text-secondary);
 }
 
 .orb-score {
@@ -106,10 +106,11 @@
   color: var(--accent);
   line-height: 1.1;
   margin: 4px 0;
+  font-variant-numeric: tabular-nums;
 }
 
 .orb-status {
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
 }
 
 /* Stats Overview Grid */
@@ -138,7 +139,7 @@
 }
 
 .icon-blue {
-  background: var(--accent-subtle);
+  background: var(--accent-soft-bg);
   color: var(--accent);
   border: 1px solid var(--accent-border);
 }
@@ -150,9 +151,9 @@
 }
 
 .icon-purple {
-  background: var(--color-secondary-light);
-  color: var(--color-secondary);
-  border: 1px solid var(--border);
+  background: var(--accent-soft-bg);
+  color: var(--accent-soft-text);
+  border: 1px solid var(--accent-border);
 }
 
 .icon-amber {
@@ -170,7 +171,7 @@
 .stat-label {
   font-size: 0.75rem;
   font-weight: 500;
-  color: var(--text-muted);
+  color: var(--text-secondary);
 }
 
 .stat-number {
@@ -178,10 +179,11 @@
   font-weight: 600;
   color: var(--text-primary);
   line-height: 1.2;
+  font-variant-numeric: tabular-nums;
 }
 
 .stat-subtext {
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   color: var(--text-muted);
   margin-top: 2px;
 }
@@ -267,8 +269,8 @@
 }
 
 .course-instructor {
-  font-size: 0.6875rem;
-  color: var(--text-muted);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
 }
 
 .course-item-title {
@@ -308,14 +310,16 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: var(--space-4);
-  font-size: 0.75rem;
-  color: var(--text-muted);
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
 }
 
 .chart-legend {
   display: flex;
   align-items: center;
   gap: 6px;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
 }
 
 .legend-dot {
@@ -344,25 +348,26 @@
 }
 
 .bar-value-tooltip {
-  font-size: 0.6875rem;
-  font-weight: 500;
-  color: var(--text-muted);
-  transition: opacity 120ms ease, transform 120ms ease, color 120ms ease;
-  opacity: 0.7;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+  transition: transform 120ms ease, color 120ms ease;
+  opacity: 1;
 }
 
 .bar-col:hover .bar-value-tooltip,
 .bar-value-tooltip.tooltip-visible {
-  opacity: 1;
-  color: var(--accent);
+  color: var(--text-primary);
   font-weight: 700;
   transform: translateY(-2px);
 }
 
 .bar-track {
-  width: 10px;
+  width: 12px;
   height: 100%;
-  background-color: var(--border);
+  background-color: var(--accent-soft-bg);
+  border: 1px solid var(--accent-border);
   border-radius: var(--radius-full);
   display: flex;
   align-items: flex-end;
@@ -383,8 +388,8 @@
 
 .bar-day {
   font-size: 0.75rem;
-  font-weight: 400;
-  color: var(--text-muted);
+  font-weight: 500;
+  color: var(--text-secondary);
 }
 
 /* Subject Competency Breakdown */
@@ -462,9 +467,14 @@
 }
 
 .rec-rule-tag {
-  font-size: 0.6875rem;
+  font-size: 0.8125rem;
   font-family: 'JetBrains Mono', monospace;
-  color: var(--text-muted);
+  background-color: var(--accent-soft-bg);
+  border: 1px solid var(--accent-border);
+  padding: 2px 7px;
+  border-radius: var(--radius-sm, 6px);
+  color: var(--accent-soft-text);
+  font-weight: 500;
 }
 
 .rec-title {
@@ -512,7 +522,7 @@
 }
 
 .date-month {
-  font-size: 0.625rem;
+  font-size: 0.75rem;
   font-weight: 600;
   color: var(--accent);
 }
@@ -535,8 +545,8 @@
 }
 
 .upcoming-meta {
-  font-size: 0.6875rem;
-  color: var(--text-muted);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
 }
 
 /* Recent Activity Timeline */
@@ -562,7 +572,7 @@
 }
 
 .timeline-dot.quiz-dot {
-  background-color: var(--color-secondary);
+  background-color: var(--accent);
 }
 
 .timeline-dot.lesson-dot {
@@ -586,7 +596,7 @@
 }
 
 .activity-time {
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   color: var(--text-muted);
   margin-top: 2px;
 }

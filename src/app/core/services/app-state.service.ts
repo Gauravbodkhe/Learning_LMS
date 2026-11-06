@@ -6,6 +6,7 @@ import { AdaptiveLearningService } from './adaptive-learning.service';
 import { LearningService } from './learning.service';
 import { NotificationService } from './notification.service';
 import { TeamService } from './team.service';
+import { ThemeService } from './theme.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +19,7 @@ export class AppStateService {
   private learningService = inject(LearningService);
   private notificationService = inject(NotificationService);
   private teamService = inject(TeamService);
+  private themeService = inject(ThemeService);
 
   public resetEntireDemoState(): void {
     this.authService.resetDemoUser();
@@ -27,6 +29,7 @@ export class AppStateService {
     this.learningService.resetDemoLearning();
     this.notificationService.resetDemoNotifications();
     this.teamService.resetTeam();
+    this.themeService.setTheme('light');
 
     this.notificationService.addNotification({
       title: 'Demo State Restored',

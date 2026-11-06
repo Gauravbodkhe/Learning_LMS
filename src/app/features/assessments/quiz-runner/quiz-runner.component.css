@@ -23,21 +23,21 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: var(--color-bg-base);
-  border: 1px solid var(--color-border);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius-full);
   padding: 0.45rem 1rem;
-  font-family: monospace;
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--color-text-main);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 16px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
 }
 
 .timer-badge.timer-urgent {
-  background: var(--color-danger-bg);
-  border-color: var(--color-danger-border);
-  color: var(--color-danger);
-  animation: pulseDot 1s infinite;
+  background: var(--weak-surface);
+  border-color: var(--weak-border);
+  color: var(--weak);
 }
 
 /* Quiz Active Layout */
@@ -69,9 +69,9 @@
 }
 
 .question-text {
-  font-size: 1.35rem;
-  font-weight: 700;
-  color: var(--color-text-main);
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--text-primary);
   line-height: 1.45;
   margin-bottom: 2rem;
 }
@@ -102,9 +102,9 @@
 }
 
 .option-btn.selected {
-  border-color: var(--accent);
-  background-color: var(--accent-subtle);
-  box-shadow: 0 0 0 2px var(--accent-border);
+  border-color: var(--accent-border);
+  background-color: var(--accent-soft-bg);
+  box-shadow: none;
 }
 
 .option-indicator {
@@ -125,14 +125,14 @@
 .option-btn.selected .option-indicator {
   background: var(--accent);
   border-color: var(--accent);
-  color: #ffffff;
+  color: var(--accent-contrast);
 }
 
 .option-text {
-  font-size: 0.975rem;
-  color: var(--color-text-main);
-  font-weight: 500;
-  line-height: 1.4;
+  font-size: 15px;
+  color: var(--text-primary);
+  font-weight: 400;
+  line-height: 1.45;
 }
 
 .runner-nav-footer {
@@ -183,14 +183,16 @@
 }
 
 .palette-btn.answered {
-  background: var(--accent-subtle);
+  background: var(--accent-soft-bg);
   border-color: var(--accent-border);
-  color: var(--accent);
+  color: var(--accent-soft-text);
 }
 
 .palette-btn.current {
-  border: 2px solid var(--accent);
-  box-shadow: 0 0 0 2px var(--accent-border);
+  background-color: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-contrast);
+  box-shadow: none;
 }
 
 .palette-legend {
@@ -261,9 +263,9 @@
 
 .result-badge-pill {
   font-size: 0.75rem;
-  font-weight: 800;
-  letter-spacing: 0.05em;
-  color: var(--color-primary);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--accent);
   margin-bottom: 0.5rem;
 }
 
@@ -438,9 +440,8 @@
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  font-size: 0.8rem;
-  font-weight: 700;
-  text-transform: uppercase;
+  font-size: 0.8125rem;
+  font-weight: 600;
   color: var(--accent);
   margin-bottom: 0.35rem;
 }

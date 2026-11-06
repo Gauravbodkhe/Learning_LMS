@@ -23,11 +23,11 @@
 }
 
 .academic-flag {
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-muted);
+  text-transform: none;
+  letter-spacing: 0.01em;
+  color: var(--text-secondary);
 }
 
 .engine-hero-title {
@@ -80,11 +80,11 @@
 }
 
 .comp-box-title {
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-muted);
+  text-transform: none;
+  letter-spacing: 0.01em;
+  color: var(--text-secondary);
   margin-bottom: var(--space-3);
 }
 
@@ -129,14 +129,14 @@
 }
 
 .comp-stat-badge .label {
-  font-size: 0.625rem;
+  font-size: 0.75rem;
   font-weight: 500;
   margin-top: 3px;
 }
 
 .comp-subtext {
-  font-size: 0.6875rem;
-  color: var(--text-muted);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
   text-align: center;
 }
 
@@ -297,8 +297,8 @@
 .score-meta-text {
   display: flex;
   flex-direction: column;
-  font-size: 0.6875rem;
-  color: var(--text-muted);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
 }
 
 .focus-topics-box {
@@ -311,11 +311,11 @@
 
 .focus-label {
   display: block;
-  font-size: 0.6875rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0.01em;
+  color: var(--text-secondary);
   margin-bottom: 6px;
 }
 
@@ -330,7 +330,7 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   padding: 2px 6px;
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   color: var(--text-secondary);
 }
 
@@ -358,9 +358,9 @@
 }
 
 .tab-btn.active {
-  background-color: var(--accent-subtle);
-  color: var(--accent);
-  border-color: var(--accent);
+  background-color: var(--accent-soft-bg);
+  color: var(--accent-soft-text);
+  border-color: var(--accent-border);
   font-weight: 500;
 }
 
@@ -381,7 +381,7 @@
 }
 
 .card-resolved {
-  opacity: 0.7;
+  border-color: var(--border);
 }
 
 .rec-card-header {
@@ -401,13 +401,14 @@
 }
 
 .rule-ref-chip {
-  font-size: 0.6875rem;
+  font-size: 0.8125rem;
   font-family: 'JetBrains Mono', monospace;
-  background-color: var(--bg-surface-raised);
-  border: 1px solid var(--border);
-  padding: 2px 6px;
-  border-radius: 3px;
-  color: var(--text-muted);
+  background-color: var(--accent-soft-bg);
+  border: 1px solid var(--accent-border);
+  padding: 2px 7px;
+  border-radius: var(--radius-sm, 6px);
+  color: var(--accent-soft-text);
+  font-weight: 500;
 }
 
 .rec-card-title {
@@ -427,10 +428,10 @@
 }
 
 .reason-label {
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   font-weight: 600;
-  text-transform: uppercase;
-  color: var(--accent);
+  text-transform: none;
+  color: var(--accent-soft-text);
   display: block;
   margin-bottom: 2px;
 }
@@ -547,9 +548,9 @@
 
 .step-status-chip {
   margin-left: auto;
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   font-weight: 500;
-  color: var(--text-muted);
+  color: var(--text-secondary);
 }
 
 .chip-completed {
@@ -579,8 +580,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.6875rem;
-  color: var(--text-muted);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
 }
 
 /* Improvement Tracking */
@@ -626,14 +627,15 @@
 }
 
 .score-sub {
-  font-size: 0.6875rem;
-  color: var(--text-muted);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
 }
 
 .score-val {
   font-size: 1.25rem;
   font-weight: 700;
   line-height: 1.1;
+  font-variant-numeric: tabular-nums;
 }
 
 .score-val.muted {

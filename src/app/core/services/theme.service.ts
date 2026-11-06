@@ -1,7 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { StorageService } from './storage.service';
 
-export type ThemeMode = 'light' | 'dark' | 'system';
+export type ThemeMode = 'light' | 'dark';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +10,7 @@ export class ThemeService {
   private storage = inject(StorageService);
   private readonly THEME_KEY = 'ui_theme';
 
-  public currentTheme = signal<ThemeMode>('system');
+  public currentTheme = signal<ThemeMode>('light');
   public isDark = signal<boolean>(false);
 
   constructor() {
@@ -18,18 +18,11 @@ export class ThemeService {
   }
 
   private initTheme(): void {
-    const saved = this.storage.getItem<ThemeMode>(this.THEME_KEY, 'system');
-    this.currentTheme.set(saved);
-    this.applyTheme(saved, false);
-
-    // Watch for OS preference changes when in system mode
-    if (typeof window !== 'undefined' && window.matchMedia) {
-      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-        if (this.currentTheme() === 'system') {
-          this.applyTheme('system', true);
-        }
-      });
-    }
+    // Default to 'light' mode on first launch or if not explicitly set to 'dark'
+    const saved = this.storage.getItem<string>(this.THEME_KEY, 'light');
+    const initialMode: ThemeMode = saved === 'dark' ? 'dark' : 'light';
+    this.currentTheme.set(initialMode);
+    this.applyTheme(initialMode, false);
   }
 
   public setTheme(mode: ThemeMode): void {
@@ -57,12 +50,9 @@ export class ThemeService {
     if (mode === 'dark') {
       root.setAttribute('data-theme', 'dark');
       effectiveDark = true;
-    } else if (mode === 'light') {
+    } else {
       root.setAttribute('data-theme', 'light');
       effectiveDark = false;
-    } else {
-      root.removeAttribute('data-theme');
-      effectiveDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
     }
 
     this.isDark.set(effectiveDark);
